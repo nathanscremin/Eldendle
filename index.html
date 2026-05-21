@@ -50,6 +50,12 @@
             </button>
         </header>
 
+        <!-- NAVEGADOR DE JOGOS -->
+        <div class="game-tabs-wrapper">
+            <button id="tab-classic" class="game-tab active">📜 Classic Wordle</button>
+            <button id="tab-emoji" class="game-tab">🗿 Emoji Guess</button>
+        </div>
+
         <!-- SELETOR DE MODOS -->
         <div class="mode-selector-wrapper">
             <div class="mode-selector">
@@ -58,8 +64,8 @@
             </div>
         </div>
 
-        <!-- SEÇÃO DE JOGO PRINCIPAL -->
-        <main class="game-main">
+        <!-- SEÇÃO DE JOGO PRINCIPAL (CLASSIC) -->
+        <main class="game-main" id="classic-view">
             <!-- Barra de Busca e Autocomplete -->
             <section class="search-section">
                 <div class="search-container">
@@ -108,6 +114,56 @@
                 <div class="empty-state" id="empty-state">
                     <p>Type and select a boss to make your first guess.</p>
                     <p class="sub-text">May Grace guide your guess, Tarnished.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- SEÇÃO DE JOGO EMOJI -->
+        <main class="game-main" id="emoji-view" style="display: none;">
+            <div class="emoji-display-section">
+                <div class="emoji-boxes">
+                    <div class="emoji-box" id="emoji-box-1">❓</div>
+                    <div class="emoji-box" id="emoji-box-2">❓</div>
+                    <div class="emoji-box" id="emoji-box-3">❓</div>
+                    <div class="emoji-box" id="emoji-box-4">❓</div>
+                    <div class="emoji-box" id="emoji-box-5">❓</div>
+                </div>
+                <p class="emoji-hint-text">Guess the Boss to reveal emojis!</p>
+            </div>
+
+            <!-- Barra de Busca Emoji -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="input-wrapper">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="emoji-boss-search" placeholder="Type a boss name..." autocomplete="off">
+                    </div>
+                    <button id="btn-emoji-guess" disabled>Guess</button>
+                    
+                    <div class="suggestions-list" id="emoji-suggestions"></div>
+                </div>
+                <div class="attempts-count-wrapper">
+                    Attempts: <span id="emoji-attempts-count">0</span> / 5
+                </div>
+            </section>
+
+            <!-- Tabela de Resultados Emoji -->
+            <section class="grid-section" style="max-width: 500px; margin: 0 auto;">
+                <div class="table-scroll-container">
+                    <table class="guess-table" id="emoji-guess-table" style="min-width: unset;">
+                        <thead>
+                            <tr>
+                                <th>Boss Guessed</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emoji-guess-tbody">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="emoji-empty-state">
+                    <p>Enter a boss name to unlock the first emoji hint.</p>
                 </div>
             </section>
         </main>
@@ -229,6 +285,8 @@
 
     <!-- Javascript do Jogo -->
     <script src="static/database.js"></script>
+    <script src="static/emojis.js"></script>
     <script src="static/app.js"></script>
+    <script src="static/emoji_app.js"></script>
 </body>
 </html>

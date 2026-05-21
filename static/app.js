@@ -5,6 +5,7 @@
  */
 
 // Estado Global da Partida
+let currentGame = 'classic'; // 'classic' ou 'emoji'
 let gameId = null;
 let currentMode = 'daily'; // 'daily' ou 'endless'
 let allBosses = []; // Apenas os nomes dos bosses para o autocomplete
@@ -592,6 +593,35 @@ function handleVictory(boss) {
 // ==========================================================================
 
 function setupEventListeners() {
+    // Game Switchers
+    const tabClassic = document.getElementById('tab-classic');
+    const tabEmoji = document.getElementById('tab-emoji');
+    const classicView = document.getElementById('classic-view');
+    const emojiView = document.getElementById('emoji-view');
+
+    function switchGame(game) {
+        if (currentGame === game) return;
+        currentGame = game;
+        if (game === 'classic') {
+            tabClassic.classList.add('active');
+            tabEmoji.classList.remove('active');
+            classicView.style.display = 'flex';
+            emojiView.style.display = 'none';
+            restoreSession();
+        } else {
+            tabEmoji.classList.add('active');
+            tabClassic.classList.remove('active');
+            emojiView.style.display = 'flex';
+            classicView.style.display = 'none';
+            // Chama a restauração do emoji
+            if (window.emojiRestoreSession) window.emojiRestoreSession();
+        }
+        closeAllModals();
+    }
+
+    if (tabClassic) tabClassic.addEventListener('click', () => switchGame('classic'));
+    if (tabEmoji) tabEmoji.addEventListener('click', () => switchGame('emoji'));
+
     // Mode Switchers
     const btnModeDaily = document.getElementById('btn-mode-daily');
     const btnModeEndless = document.getElementById('btn-mode-endless');
@@ -607,7 +637,12 @@ function setupEventListeners() {
             btnModeDaily.classList.remove('active');
         }
         closeAllModals();
-        restoreSession(); // Restaura ou cria nova para o modo
+        
+        if (currentGame === 'classic') {
+            restoreSession(); // Restaura ou cria nova para o modo classico
+        } else {
+            if (window.emojiRestoreSession) window.emojiRestoreSession();
+        }
     }
 
     if (btnModeDaily) btnModeDaily.addEventListener('click', () => switchMode('daily'));
