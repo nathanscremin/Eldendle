@@ -1,14 +1,34 @@
 # Bibliotecas
 import random
 import uuid
+import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from typing import List, Dict
 from .database import BOSS_DATABASE
 from .models import Boss, GuessFeedback, FeedbackStatus
 
 # Inicialização do FastAPI
 app = FastAPI()
+
+# Configuração de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Caminho absoluto para a pasta do cliente web
+current_dir = os.path.dirname(os.path.abspath(__file__))
+client_web_dir = os.path.abspath(os.path.join(current_dir, "..", "..", "client", "web"))
+
+# Montar arquivos estáticos
+app.mount("/static", StaticFiles(directory=os.path.join(client_web_dir, "static")), name="static")
 
 # Inicialização do jogo
 ACTIVE_GAMES: Dict[str, Boss] = {}
@@ -22,7 +42,7 @@ def get_new_random_boss() -> Boss:
 
 @app.get("/")
 def read_root():
-    return{"Projeto" : "Elden Rindle API"}
+    return FileResponse(os.path.join(client_web_dir, "index.html"))
 
 @app.get("/api/bosses/names", response_model=List[str])
 def get_all_boss_names():
@@ -86,3 +106,56 @@ def process_guess(game_id: str, guess_name: str):
         feedback["runes"] = "lower"  
         
     return GuessFeedback(**feedback)
+
+@app.get("/api/game/hint/{game_id}")
+def get_game_hint(game_id: str):
+    # Retorna uma dica para o jogo
+    correct_boss = ACTIVE_GAMES.get(game_id)
+    if not correct_boss:
+        raise HTTPException(status_code=404, detail="Sessão de jogo não encontrada.")
+    
+    # Mascara o nome do boss deixando apenas a primeira letra de cada palavra
+    words = correct_boss.nome.split(" ")
+    masked_words = []
+    for word in words:
+        if len(word) > 1:
+            # Mantém a primeira letra e substitui o resto por asteriscos, respeitando caracteres especiais
+            masked = word[0] + "".join(["*" if c.isalnum() else c for c in word[1:]])
+            masked_words.append(masked)
+        else:
+            masked_words.append(word)
+    masked_name = " ".join(masked_words)
+    
+    return {
+        "masked_name": masked_name,
+        "regiao": correct_boss.regiao,
+        "raca": correct_boss.raca,
+        "tipo": correct_boss.tipo,
+        "obrigatorio": "Yes" if correct_boss.obrigatorio else "No"
+    }
+
+@app.get("/api/boss/image/{boss_name}")
+def get_boss_image(boss_name: str):
+    import urllib.request
+    import urllib.parse
+    import json
+    import ssl
+    from fastapi.responses import RedirectResponse
+    
+    query = urllib.parse.quote(boss_name)
+    api_url = f"https://eldenring.fandom.com/api.php?action=query&prop=pageimages&titles={query}&pithumbsize=200&format=json"
+    
+    try:
+        req = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
+        context = ssl._create_unverified_context()
+        with urllib.request.urlopen(req, timeout=5, context=context) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            pages = data.get("query", {}).get("pages", {})
+            for page_id, page_data in pages.items():
+                if "thumbnail" in page_data:
+                    return RedirectResponse(url=page_data["thumbnail"]["source"], status_code=302)
+    except Exception as e:
+        print(f"Erro ao buscar imagem no Fandom para {boss_name}: {e}")
+    
+    # Fallback logo
+    return RedirectResponse(url="https://static.wikia.nocookie.net/eldenring/images/1/10/Elden_Ring_logo.png/revision/latest/scale-to-width-down/200", status_code=302)

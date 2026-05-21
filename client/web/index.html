@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eldendle - Elden Ring Boss Guessing Game</title>
+    <meta name="description" content="Guess the secret Elden Ring boss in this fun Wordle-style (.dle) game. Visual hints, region, type, runes and much more!">
+    <link rel="icon" type="image/png" href="https://eldenring.wiki.fextralife.com/file/Elden-Ring/godrick_the_grafted_boss_elden_ring_wiki_guide_200px.jpg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <!-- Background overlay para efeito de névoa de graça -->
+    <div class="grace-glow-overlay"></div>
+
+    <div class="app-container">
+        <!-- CABEÇALHO -->
+        <header class="app-header">
+            <button class="header-btn" id="btn-help" title="How to Play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <span>How to Play</span>
+            </button>
+
+            <div class="logo-container">
+                <!-- SVG detalhado da Elden Ring estilizado -->
+                <svg class="elden-ring-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Círculo Superior -->
+                    <circle cx="50" cy="38" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
+                    <!-- Círculo Central Esquerdo -->
+                    <circle cx="40" cy="54" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
+                    <!-- Círculo Central Direito -->
+                    <circle cx="60" cy="54" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
+                    <!-- Círculo Inferior -->
+                    <circle cx="50" cy="70" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
+                    <!-- Arco de Runas Cruzando verticalmente -->
+                    <path d="M50,10 L50,90" stroke="#d4af37" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="2,2" />
+                    <!-- Arco curvado na base (Runa de Radagon) -->
+                    <path d="M20,68 Q50,92 80,68" fill="none" stroke="#d4af37" stroke-width="2" stroke-opacity="0.9" />
+                </svg>
+                <h1 class="logo-title">ELDENDLE</h1>
+                <p class="logo-subtitle">Guess the Elden Ring Boss</p>
+            </div>
+
+            <button class="header-btn" id="btn-stats" title="Statistics">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                <span>Statistics</span>
+            </button>
+        </header>
+
+        <!-- SEÇÃO DE JOGO PRINCIPAL -->
+        <main class="game-main">
+            <!-- Barra de Busca e Autocomplete -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="input-wrapper">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="boss-search" placeholder="Type a boss name (e.g. Margit, Malenia...)" autocomplete="off">
+                    </div>
+                    <button id="btn-guess" disabled>Guess</button>
+                    
+                    <!-- Lista Suspensa de Autocomplete -->
+                    <div class="suggestions-list" id="suggestions"></div>
+                </div>
+                <div class="attempts-count-wrapper">
+                    Attempts: <span id="attempts-count">0</span>
+                </div>
+                <button id="btn-hint" class="header-btn hint-btn" style="display: none; margin-top: 10px;">💡 Request Hint's Grace</button>
+                <div id="hint-display-box" class="hint-display-box" style="display: none;">
+                    <p><strong>💡 Grace's Revelation:</strong></p>
+                    <p id="hint-text"></p>
+                </div>
+            </section>
+
+            <!-- Tabela de Resultados -->
+            <section class="grid-section">
+                <div class="table-scroll-container">
+                    <table class="guess-table" id="guess-table">
+                        <thead>
+                            <tr>
+                                <th>Boss</th>
+                                <th>Region</th>
+                                <th>Phase</th>
+                                <th>Type</th>
+                                <th>Race</th>
+                                <th>Location</th>
+                                <th>Main Drop</th>
+                                <th>Mandatory</th>
+                                <th>Runes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guess-tbody">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Mensagem mostrada quando não há palpites ainda -->
+                <div class="empty-state" id="empty-state">
+                    <p>Type and select a boss to make your first guess.</p>
+                    <p class="sub-text">May Grace guide your guess, Tarnished.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- RODAPÉ -->
+        <footer class="app-footer">
+            <p>Eldendle - Developed for Scripting Programming FATEC Rio Claro</p>
+        </footer>
+    </div>
+
+    <!-- MODAL 1: COMO JOGAR (INSTRUÇÕES) -->
+    <div class="modal-overlay" id="modal-help">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>How to Play</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Discover the mysterious <strong>Elden Ring</strong> Boss in every match! With each guess, the cell colors change to indicate how close you are.</p>
+                
+                <div class="color-rules">
+                    <div class="rule-item">
+                        <span class="color-badge correct"></span>
+                        <div>
+                            <strong>Green (Correct)</strong>
+                            <p>The attribute perfectly matches the secret boss!</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="color-badge partial"></span>
+                        <div>
+                            <strong>Orange / Yellow (Partial)</strong>
+                            <p>Only applicable to <strong>Region</strong>. Indicates that the boss is in the same general region, but the specific location is different.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="color-badge incorrect"></span>
+                        <div>
+                            <strong>Red (Incorrect)</strong>
+                            <p>The attribute does not match the secret boss.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="indicator-rules">
+                    <h3>Directional Indicators (Arrows)</h3>
+                    <p>In the <strong>Phase</strong> and <strong>Runes</strong> columns:</p>
+                    <ul>
+                        <li><span class="arrow-indicator">🔼</span> The secret boss's value is <strong>higher</strong> than your guess.</li>
+                        <li><span class="arrow-indicator">🔽</span> The secret boss's value is <strong>lower</strong> than your guess.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ESTATÍSTICAS -->
+    <div class="modal-overlay" id="modal-stats">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Your Statistics</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-value" id="stat-played">0</span>
+                        <span class="stat-label">Played</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-value" id="stat-winrate">0%</span>
+                        <span class="stat-label">Win %</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-value" id="stat-streak">0</span>
+                        <span class="stat-label">Current Streak</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-value" id="stat-max-streak">0</span>
+                        <span class="stat-label">Max Streak</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="btn-reset-stats" style="margin: 20px auto 0; display: block; background: #8f1f26;">
+                    Reset Statistics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: VITÓRIA (INIMIGO DERRUBADO) -->
+    <div class="modal-overlay" id="modal-victory">
+        <div class="modal-card victory-card">
+            <div class="victory-banner">
+                <h2 class="victory-title">ENEMY FELLED</h2>
+                <div class="gold-accent-line"></div>
+            </div>
+            <div class="modal-body text-center">
+                <p class="victory-intro">You found the mysterious boss!</p>
+                
+                <div class="victory-boss-showcase" id="victory-boss-showcase">
+                    <!-- Preenchido dinamicamente pelo JS -->
+                    <img id="victory-boss-img" class="victory-boss-img" src="" alt="Boss">
+                    <h3 id="victory-boss-name" class="victory-boss-name">Boss Name</h3>
+                    <p class="victory-boss-details" id="victory-boss-details">Region: Limgrave | Phase: 2 | Type: Demigod</p>
+                </div>
+
+                <div class="victory-stats">
+                    <p>Guesses needed: <strong id="victory-attempts">0</strong></p>
+                </div>
+
+                <button class="btn-primary" id="btn-restart">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/app.js"></script>
+</body>
+</html>
