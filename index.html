@@ -51,9 +51,11 @@
         </header>
 
         <!-- SELETOR DE MODOS -->
-        <div class="mode-selector">
-            <button id="btn-mode-daily" class="mode-btn active" title="Play the unique daily boss">👑 Daily Challenge</button>
-            <button id="btn-mode-endless" class="mode-btn" title="Play infinitely with random bosses">⚔️ Endless Mode</button>
+        <div class="mode-selector-wrapper">
+            <div class="mode-selector">
+                <button id="btn-mode-daily" class="mode-btn active" title="Play the unique daily boss">👑 Daily Challenge</button>
+                <button id="btn-mode-endless" class="mode-btn" title="Play infinitely with random bosses">⚔️ Endless Mode</button>
+            </div>
         </div>
 
         <!-- SEÇÃO DE JOGO PRINCIPAL -->
@@ -189,8 +191,11 @@
                     </div>
                 </div>
 
-                <button class="btn-primary" id="btn-reset-stats" style="margin: 20px auto 0; display: block; background: #8f1f26;">
+                <button class="btn-primary" id="btn-reset-stats" style="margin: 20px auto 10px; display: block; background: #8f1f26;">
                     Reset Statistics
+                </button>
+                <button class="btn-primary" id="btn-hard-reset" style="margin: 0 auto; display: block; background: #551111; font-size: 0.8rem; padding: 8px 16px;">
+                    Hard Reset (Clear Cache)
                 </button>
             </div>
         </div>

@@ -672,6 +672,17 @@ function setupEventListeners() {
         }
     });
 
+    // Hard Reset (Limpar Cache)
+    const btnHardReset = document.getElementById('btn-hard-reset');
+    if (btnHardReset) {
+        btnHardReset.addEventListener('click', () => {
+            if (confirm('This will wipe all saves, cache, and daily progress. Are you sure?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+    }
+
     // Jogar novamente (Reiniciar)
     btnRestart.addEventListener('click', () => {
         closeAllModals();
