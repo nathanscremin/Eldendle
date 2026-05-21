@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <!-- Fundo Escuro para contraste com a aba do navegador (opcional, mas ajuda a destacar o dourado) -->
+    <rect width="100" height="100" rx="20" fill="#111111" />
+    
+    <!-- Texto do Símbolo da Grande Runa Centralizado -->
+    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="65" fill="#d4af37">🜋</text>
+</svg>
