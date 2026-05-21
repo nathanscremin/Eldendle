@@ -140,6 +140,44 @@ body {
     text-transform: uppercase;
 }
 
+/* SELETOR DE MODOS */
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 10;
+}
+
+.mode-btn {
+    background: rgba(20, 20, 25, 0.6);
+    border: 1px solid var(--border-gold-low);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: var(--font-cinzel);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-btn:hover {
+    background: rgba(193, 155, 72, 0.05);
+    border-color: var(--border-gold-med);
+    color: var(--text-primary);
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, rgba(193, 155, 72, 0.2) 0%, rgba(154, 117, 34, 0.1) 100%);
+    border-color: var(--border-gold-high);
+    color: var(--gold-bright);
+    box-shadow: 0 0 15px var(--gold-glow);
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+}
+
 /* SEÇÃO DE BUSCA E ENTRADA */
 .game-main {
     flex-grow: 1;

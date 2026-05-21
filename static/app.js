@@ -6,6 +6,7 @@
 
 // Estado Global da Partida
 let gameId = null;
+let currentMode = 'daily'; // 'daily' ou 'endless'
 let allBosses = []; // Apenas os nomes dos bosses para o autocomplete
 let guessedBosses = []; // Bosses já chutados nesta rodada
 let isGameOver = false;
@@ -44,10 +45,28 @@ function getBossImageUrl(bossName) {
     return BOSS_DATABASE[bossName].image_url.replace('/static/', 'static/');
 }
 
+function getCurrentDateKey() {
+    const today = new Date();
+    return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+}
+
+function getDailyBossKey() {
+    const keys = Object.keys(BOSS_DATABASE);
+    const dateStr = getCurrentDateKey();
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+        hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+        hash |= 0; 
+    }
+    const index = Math.abs(hash) % keys.length;
+    return keys[index];
+}
+
 // Salvar a sessão atual no localStorage
 function saveSession() {
     if (!gameId) return;
-    localStorage.setItem('eldendle_session', JSON.stringify({
+    const sessionKey = currentMode === 'daily' ? `eldendle_daily_${getCurrentDateKey()}` : 'eldendle_endless_session';
+    localStorage.setItem(sessionKey, JSON.stringify({
         gameId,
         guessedBosses,
         isGameOver,
@@ -60,9 +79,10 @@ function saveSession() {
 // Restaurar a sessão salva no localStorage (F5)
 async function restoreSession() {
     // Carrega a lista de chefes primeiro para que o autocomplete e filtros funcionem
-    await loadBossList();
+    if (allBosses.length === 0) await loadBossList();
 
-    const sessionDataStr = localStorage.getItem('eldendle_session');
+    const sessionKey = currentMode === 'daily' ? `eldendle_daily_${getCurrentDateKey()}` : 'eldendle_endless_session';
+    const sessionDataStr = localStorage.getItem(sessionKey);
     if (!sessionDataStr) {
         await startNewGame();
         return;
@@ -100,16 +120,24 @@ async function restoreSession() {
         // Atualiza estado do botão de dica
         checkHintButtonAvailability();
 
+        // Configura botão de Play Again
+        const btnRestart = document.getElementById('btn-restart');
+        if (currentMode === 'daily') {
+            btnRestart.style.display = 'none';
+        } else {
+            btnRestart.style.display = 'inline-block';
+        }
+
         // Se o jogo já acabou, reabre a tela de vitória
         if (isGameOver && lastVictoryBoss) {
             renderVictoryModal(lastVictoryBoss);
             openModal(modalVictory);
         }
 
-        console.log(`Session restored successfully: ${gameId}`);
+        console.log(`Session restored successfully: ${gameId} (${currentMode})`);
     } catch (error) {
         console.error('Error restoring previous session:', error);
-        localStorage.removeItem('eldendle_session');
+        localStorage.removeItem(sessionKey);
         await startNewGame();
     }
 }
@@ -179,7 +207,9 @@ async function startNewGame() {
     currentGuessesList = [];
     sessionHintData = null;
     lastVictoryBoss = null;
-    localStorage.removeItem('eldendle_session');
+    
+    const sessionKey = currentMode === 'daily' ? `eldendle_daily_${getCurrentDateKey()}` : 'eldendle_endless_session';
+    localStorage.removeItem(sessionKey);
 
     checkHintButtonAvailability();
 
@@ -190,15 +220,20 @@ async function startNewGame() {
     inputSearch.disabled = false;
     btnGuess.disabled = true;
     
-    // Sorteia um boss aleatório
-    const keys = Object.keys(BOSS_DATABASE);
-    const randomKey = keys[Math.floor(Math.random() * keys.length)];
-    gameId = randomKey;
+    const btnRestart = document.getElementById('btn-restart');
+    if (currentMode === 'daily') {
+        gameId = getDailyBossKey();
+        if(btnRestart) btnRestart.style.display = 'none';
+    } else {
+        const keys = Object.keys(BOSS_DATABASE);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        gameId = randomKey;
+        if(btnRestart) btnRestart.style.display = 'inline-block';
+    }
     
-    // A dica só será gerada quando o usuário clicar no botão de dica
     sessionHintData = null;
 
-    console.log(`New session created (Offline Engine).`);
+    console.log(`New session created (${currentMode}).`);
 }
 
 async function loadBossList() {
@@ -557,6 +592,27 @@ function handleVictory(boss) {
 // ==========================================================================
 
 function setupEventListeners() {
+    // Mode Switchers
+    const btnModeDaily = document.getElementById('btn-mode-daily');
+    const btnModeEndless = document.getElementById('btn-mode-endless');
+
+    function switchMode(mode) {
+        if (currentMode === mode) return;
+        currentMode = mode;
+        if (mode === 'daily') {
+            btnModeDaily.classList.add('active');
+            btnModeEndless.classList.remove('active');
+        } else {
+            btnModeEndless.classList.add('active');
+            btnModeDaily.classList.remove('active');
+        }
+        closeAllModals();
+        restoreSession(); // Restaura ou cria nova para o modo
+    }
+
+    if (btnModeDaily) btnModeDaily.addEventListener('click', () => switchMode('daily'));
+    if (btnModeEndless) btnModeEndless.addEventListener('click', () => switchMode('endless'));
+
     // Input de busca
     inputSearch.addEventListener('input', (e) => {
         const query = e.target.value.trim();
