@@ -35,12 +35,13 @@ const btnStatsOpen = document.getElementById('btn-stats');
 const btnResetStats = document.getElementById('btn-reset-stats');
 const btnRestart = document.getElementById('btn-restart');
 
-// Função auxiliar para carregar a imagem do boss de uma fonte segura (Fandom API via backend)
+// Função auxiliar para carregar a imagem do boss localmente
 function getBossImageUrl(bossName) {
-    if (!bossName) {
+    if (!bossName || !BOSS_DATABASE[bossName]) {
         return 'https://static.wikia.nocookie.net/eldenring/images/1/10/Elden_Ring_logo.png/revision/latest/scale-to-width-down/200';
     }
-    return `/api/boss/image/${encodeURIComponent(bossName)}`;
+    // Removemos a barra inicial para funcionar no GitHub Pages (caminhos relativos)
+    return BOSS_DATABASE[bossName].image_url.replace('/static/', 'static/');
 }
 
 // Salvar a sessão atual no localStorage
@@ -158,137 +159,103 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ==========================================================================
-// FUNÇÕES DE COMUNICAÇÃO COM O SERVIDOR (API FASTAPI)
+// FUNÇÕES DO MOTOR LOCAL (SUBSTITUI API FASTAPI)
 // ==========================================================================
 
-// Iniciar uma nova sessão de jogo no servidor
+function checkAttribute(guessVal, correctVal) {
+    if (guessVal === correctVal) return 'correct';
+    return 'incorrect';
+}
+
+function checkNumericAttribute(guessVal, correctVal) {
+    if (guessVal === correctVal) return 'correct';
+    if (guessVal < correctVal) return 'higher';
+    return 'lower';
+}
+
 async function startNewGame() {
-    try {
-        isGameOver = false;
-        guessedBosses = [];
-        currentGuessesList = [];
-        sessionHintData = null;
-        lastVictoryBoss = null;
-        localStorage.removeItem('eldendle_session');
+    isGameOver = false;
+    guessedBosses = [];
+    currentGuessesList = [];
+    sessionHintData = null;
+    lastVictoryBoss = null;
+    localStorage.removeItem('eldendle_session');
 
-        // Atualiza a exibição da dica (esconde tudo)
-        checkHintButtonAvailability();
+    checkHintButtonAvailability();
 
-        attemptsCountEl.textContent = '0';
-        guessTbody.innerHTML = '';
-        emptyState.style.display = 'block';
-        inputSearch.value = '';
-        inputSearch.disabled = false;
-        btnGuess.disabled = true;
-        
-        const response = await fetch('/app/game/start', { method: 'POST' });
-        if (!response.ok) throw new Error('Could not start the game.');
-        
-        const data = await response.json();
-        gameId = data.game_id;
-        console.log(`New session created: ${gameId}`);
-    } catch (error) {
-        console.error('Error starting the game:', error);
-        alert('Error connecting to the server. Make sure the FastAPI backend is running!');
-    }
+    attemptsCountEl.textContent = '0';
+    guessTbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    inputSearch.value = '';
+    inputSearch.disabled = false;
+    btnGuess.disabled = true;
+    
+    // Sorteia um boss aleatório
+    const keys = Object.keys(BOSS_DATABASE);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    gameId = randomKey;
+    
+    // A dica só será gerada quando o usuário clicar no botão de dica
+    sessionHintData = null;
+
+    console.log(`New session created (Offline Engine).`);
 }
 
-// Carregar lista de nomes dos bosses para o autocomplete
 async function loadBossList() {
-    try {
-        const response = await fetch('/api/bosses/names');
-        if (!response.ok) throw new Error('Error loading bosses.');
-        
-        allBosses = await response.json();
-        console.log(`Total bosses loaded: ${allBosses.length}`);
-    } catch (error) {
-        console.error('Error loading boss list:', error);
-    }
+    allBosses = Object.keys(BOSS_DATABASE);
+    console.log(`Total bosses loaded: ${allBosses.length}`);
 }
 
-// Buscar detalhes completos de um boss para preencher a linha da tabela
 async function getBossDetails(bossName) {
-    try {
-        const response = await fetch(`/api/boss/details/${encodeURIComponent(bossName)}`);
-        if (!response.ok) throw new Error('Error fetching boss details.');
-        return await response.json();
-    } catch (error) {
-        console.error(`Error fetching details for ${bossName}:`, error);
-        return null;
-    }
+    return BOSS_DATABASE[bossName] || null;
 }
 
-// Enviar palpite ao servidor
 async function submitGuess(guessName) {
     if (isGameOver || guessedBosses.includes(guessName)) return;
 
-    try {
-        // Desativa controles enquanto processa
-        inputSearch.disabled = true;
-        btnGuess.disabled = true;
+    inputSearch.disabled = true;
+    btnGuess.disabled = true;
 
-        // Envia o chute (POST)
-        const responseGuess = await fetch(`/api/guess/${gameId}/${encodeURIComponent(guessName)}`, {
-            method: 'POST'
-        });
-        if (!responseGuess.ok) {
-            if (responseGuess.status === 404) {
-                try {
-                    const errData = await responseGuess.json();
-                    if (errData.detail && errData.detail.includes("session")) {
-                        alert("Your game session has expired or the server was restarted. A new game will begin.");
-                        localStorage.removeItem('eldendle_session');
-                        await startNewGame();
-                        return;
-                    }
-                } catch (e) {
-                    // Ignora erro ao tentar ler o JSON
-                }
-                alert(`O boss "${guessName}" não foi encontrado no banco de dados!`);
-            } else {
-                throw new Error('Failed to process guess.');
-            }
-            inputSearch.disabled = false;
-            return;
-        }
-        
-        const feedback = await responseGuess.json();
+    const correctBoss = BOSS_DATABASE[gameId];
+    const guessBoss = BOSS_DATABASE[guessName];
 
-        // Busca os detalhes do chefe que foi chutado para colocar na tela
-        const bossDetails = await getBossDetails(guessName);
-        if (!bossDetails) {
-            alert('Could not load details for the guessed boss.');
-            inputSearch.disabled = false;
-            return;
-        }
-
-        // Registra palpite
-        guessedBosses.push(guessName);
-        currentGuessesList.push({ boss: bossDetails, feedback: feedback });
-        attemptsCountEl.textContent = guessedBosses.length;
-        emptyState.style.display = 'none';
-
-        // Salva a sessão no localStorage
-        saveSession();
-
-        // Renderiza palpite na tabela com animações
-        addGuessRowToTable(bossDetails, feedback);
-
-        // Limpa input e atualiza botões/dicas
-        inputSearch.value = '';
+    if (!guessBoss) {
+        alert(`O boss "${guessName}" não foi encontrado no banco de dados!`);
         inputSearch.disabled = false;
-        closeSuggestions();
-        checkHintButtonAvailability();
+        return;
+    }
 
-        // Checar vitória (se todos os campos forem 'correct')
-        const won = Object.values(feedback).every(status => status === 'correct');
-        if (won) {
-            handleVictory(bossDetails);
-        }
-    } catch (error) {
-        console.error('Error submitting guess:', error);
-        alert('An error occurred while submitting your guess.');
-        inputSearch.disabled = false;
+    // Calcula o feedback idêntico ao do backend em Python
+    const feedback = {
+        name: guessBoss.name === correctBoss.name ? 'correct' : 'incorrect',
+        region: checkAttribute(guessBoss.region, correctBoss.region),
+        phase: checkNumericAttribute(guessBoss.phase, correctBoss.phase),
+        type: checkAttribute(guessBoss.type, correctBoss.type),
+        race: checkAttribute(guessBoss.race, correctBoss.race),
+        specific_location: checkAttribute(guessBoss.specific_location, correctBoss.specific_location),
+        mandatory: checkAttribute(guessBoss.mandatory, correctBoss.mandatory),
+        dlc: checkAttribute(guessBoss.dlc, correctBoss.dlc),
+        runes: checkNumericAttribute(guessBoss.runes, correctBoss.runes)
+    };
+
+    guessedBosses.push(guessName);
+    currentGuessesList.push({ boss: guessBoss, feedback: feedback });
+    attemptsCountEl.textContent = guessedBosses.length;
+    emptyState.style.display = 'none';
+
+    saveSession();
+
+    addGuessRowToTable(guessBoss, feedback);
+
+    inputSearch.value = '';
+    inputSearch.disabled = false;
+    closeSuggestions();
+    checkHintButtonAvailability();
+
+    // Se tudo estiver correto, o jogador ganhou!
+    const won = Object.values(feedback).every(status => status === 'correct');
+    if (won) {
+        handleVictory(guessBoss);
     }
 }
 
@@ -660,20 +627,23 @@ function setupEventListeners() {
     if (btnHint) {
         btnHint.addEventListener('click', async () => {
             if (!gameId || isGameOver) return;
-            try {
-                btnHint.disabled = true;
-                const response = await fetch(`/api/game/hint/${gameId}`);
-                if (!response.ok) throw new Error('Error fetching hint.');
-                
-                sessionHintData = await response.json();
+            btnHint.disabled = true;
+            
+            const correctBoss = BOSS_DATABASE[gameId];
+            if (correctBoss) {
+                sessionHintData = {
+                    name: correctBoss.name,
+                    masked_name: correctBoss.name.replace(/[A-Za-z0-9]/g, '*'),
+                    region: correctBoss.region,
+                    type: correctBoss.type,
+                    race: correctBoss.race,
+                    mandatory: correctBoss.mandatory,
+                    dlc: correctBoss.dlc
+                };
                 saveSession();
                 checkHintButtonAvailability();
-            } catch (error) {
-                console.error('Error fetching hint:', error);
-                alert('An error occurred while obtaining the hint. Make sure the server is running.');
-            } finally {
-                btnHint.disabled = false;
             }
+            btnHint.disabled = false;
         });
     }
 }
