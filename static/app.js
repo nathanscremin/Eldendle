@@ -129,10 +129,9 @@ async function restoreSession() {
             btnRestart.style.display = 'inline-block';
         }
 
-        // Se o jogo já acabou, reabre a tela de vitória
+        // Se o jogo já acabou, renderiza os detalhes mas NÃO ABRE automaticamente
         if (isGameOver && lastVictoryBoss) {
-            renderVictoryModal(lastVictoryBoss);
-            openModal(modalVictory);
+            renderVictoryModal(lastVictoryBoss, guessedBosses.length);
         }
 
         console.log(`Session restored successfully: ${gameId} (${currentMode})`);
@@ -289,9 +288,14 @@ async function submitGuess(guessName) {
     checkHintButtonAvailability();
 
     // Se tudo estiver correto, o jogador ganhou!
-    const won = Object.values(feedback).every(status => status === 'correct');
-    if (won) {
-        handleVictory(guessBoss);
+    const isWin = Object.values(feedback).every(status => status === 'correct');
+    if (isWin) {
+        isGameOver = true;
+        lastVictoryBoss = guessBoss;
+        inputSearch.disabled = true;
+        btnGuess.disabled = true;
+        saveSession();
+        handleVictory(guessBoss, guessedBosses.length);
     }
 }
 
@@ -538,16 +542,19 @@ function updateStatsDisplay() {
     document.getElementById('stat-max-streak').textContent = stats.maxStreak;
 }
 
-function renderVictoryModal(boss) {
+// Mostra os detalhes do boss no Modal de Vitória
+function renderVictoryModal(boss, attempts) {
     const victoryImg = document.getElementById('victory-boss-img');
+    const victoryName = document.getElementById('victory-boss-name');
+    const showcase = document.getElementById('victory-showcase');
+
     victoryImg.src = getBossImageUrl(boss.name);
+    victoryName.textContent = boss.name;
     
-    document.getElementById('victory-boss-name').textContent = boss.name;
-    
-    const showcase = document.getElementById('victory-boss-showcase');
-    showcase.style.cursor = 'pointer';
-    showcase.title = 'Search images on Google';
-    showcase.onclick = () => window.open(`https://www.google.com/search?tbm=isch&q=Elden+Ring+${encodeURIComponent(boss.name)}`, '_blank');
+    const showcaseContainer = document.getElementById('victory-boss-showcase');
+    showcaseContainer.style.cursor = 'pointer';
+    showcaseContainer.title = 'Search images on Google';
+    showcaseContainer.onclick = () => window.open(`https://www.google.com/search?tbm=isch&q=Elden+Ring+${encodeURIComponent(boss.name)}`, '_blank');
     
     const formatThousands = (num) => num.toLocaleString('en-US');
     document.getElementById('victory-boss-details').innerHTML = `
@@ -557,15 +564,11 @@ function renderVictoryModal(boss) {
         <strong>DLC:</strong> ${boss.dlc ? 'Yes' : 'No'} | <strong>Runes:</strong> ${formatThousands(boss.runes)}
     `;
 
-    document.getElementById('victory-attempts').textContent = guessedBosses.length;
+    document.getElementById('victory-attempts').textContent = attempts;
 }
 
-function handleVictory(boss) {
-    isGameOver = true;
-    lastVictoryBoss = boss;
-    inputSearch.disabled = true;
-    btnGuess.disabled = true;
-
+// Lógica Genérica de Vitória (Atualiza stats e abre o modal)
+function handleVictory(boss, attempts) {
     // Atualiza estatísticas locais
     const stats = getStats();
     stats.played += 1;
@@ -576,11 +579,8 @@ function handleVictory(boss) {
     }
     saveStats(stats);
 
-    // Salva a sessão atualizada indicando o fim de jogo e o boss vitorioso
-    saveSession();
-
     // Mostra o Modal de Vitória
-    renderVictoryModal(boss);
+    renderVictoryModal(boss, attempts);
 
     // Atraso sutil para o jogador ver as células terminarem o flip antes do modal de vitória
     setTimeout(() => {
@@ -596,31 +596,38 @@ function setupEventListeners() {
     // Game Switchers
     const tabClassic = document.getElementById('tab-classic');
     const tabEmoji = document.getElementById('tab-emoji');
+    const tabImage = document.getElementById('tab-image');
     const classicView = document.getElementById('classic-view');
     const emojiView = document.getElementById('emoji-view');
+    const imageView = document.getElementById('image-view');
 
     function switchGame(game) {
         if (currentGame === game) return;
         currentGame = game;
+        
+        // Reset ALL active classes and displays
+        [tabClassic, tabEmoji, tabImage].forEach(tab => tab?.classList.remove('active'));
+        [classicView, emojiView, imageView].forEach(view => { if(view) view.style.display = 'none'; });
+
         if (game === 'classic') {
             tabClassic.classList.add('active');
-            tabEmoji.classList.remove('active');
             classicView.style.display = 'flex';
-            emojiView.style.display = 'none';
             restoreSession();
-        } else {
+        } else if (game === 'emoji') {
             tabEmoji.classList.add('active');
-            tabClassic.classList.remove('active');
             emojiView.style.display = 'flex';
-            classicView.style.display = 'none';
-            // Chama a restauração do emoji
             if (window.emojiRestoreSession) window.emojiRestoreSession();
+        } else if (game === 'image') {
+            tabImage.classList.add('active');
+            imageView.style.display = 'flex';
+            if (window.imageRestoreSession) window.imageRestoreSession();
         }
         closeAllModals();
     }
 
     if (tabClassic) tabClassic.addEventListener('click', () => switchGame('classic'));
     if (tabEmoji) tabEmoji.addEventListener('click', () => switchGame('emoji'));
+    if (tabImage) tabImage.addEventListener('click', () => switchGame('image'));
 
     // Mode Switchers
     const btnModeDaily = document.getElementById('btn-mode-daily');
@@ -640,8 +647,10 @@ function setupEventListeners() {
         
         if (currentGame === 'classic') {
             restoreSession(); // Restaura ou cria nova para o modo classico
-        } else {
+        } else if (currentGame === 'emoji') {
             if (window.emojiRestoreSession) window.emojiRestoreSession();
+        } else if (currentGame === 'image') {
+            if (window.imageRestoreSession) window.imageRestoreSession();
         }
     }
 

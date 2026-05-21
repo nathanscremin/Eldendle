@@ -70,15 +70,13 @@
             if (emojiIsGameOver) {
                 const lastGuess = emojiGuessedBosses[emojiGuessedBosses.length - 1];
                 if (lastGuess === emojiGameId) {
-                    renderVictoryModal(BOSS_DATABASE[emojiGameId]);
-                    openModal(modalVictory);
+                    renderVictoryModal(BOSS_DATABASE[emojiGameId], emojiGuessedBosses.length);
                 } else if (emojiGuessedBosses.length >= 5) {
-                    // Perdeu no limite de tentativas (Exibiremos um modal especial futuramente se necessário, ou só o boss correto)
-                    renderVictoryModal(BOSS_DATABASE[emojiGameId]);
+                    // Perdeu no limite de tentativas
+                    renderVictoryModal(BOSS_DATABASE[emojiGameId], emojiGuessedBosses.length);
                     document.getElementById('victory-boss-details').innerHTML = `<strong>Game Over! You ran out of attempts!</strong><br>The secret boss was ${emojiGameId}.`;
                     document.querySelector('.victory-title').textContent = "YOU DIED";
                     document.querySelector('.victory-title').style.color = "#c91a25";
-                    openModal(modalVictory);
                 }
             }
         } catch (e) {
@@ -173,14 +171,14 @@
             emojiIsGameOver = true;
             updateEmojiUI();
             saveEmojiSession();
-            handleVictory(BOSS_DATABASE[emojiGameId]); // from app.js
+            handleVictory(BOSS_DATABASE[emojiGameId], emojiGuessedBosses.length); // from app.js
         } else if (emojiGuessedBosses.length >= 5) {
             emojiIsGameOver = true;
             updateEmojiUI();
             saveEmojiSession();
             
             // Perdeu no limite de tentativas
-            renderVictoryModal(BOSS_DATABASE[emojiGameId]);
+            renderVictoryModal(BOSS_DATABASE[emojiGameId], emojiGuessedBosses.length);
             document.getElementById('victory-boss-details').innerHTML = `<strong>Game Over! You ran out of attempts!</strong><br>The secret boss was ${emojiGameId}.`;
             document.querySelector('.victory-title').textContent = "YOU DIED";
             document.querySelector('.victory-title').style.color = "#c91a25";

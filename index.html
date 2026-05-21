@@ -54,6 +54,7 @@
         <div class="game-tabs-wrapper">
             <button id="tab-classic" class="game-tab active">📜 Classic Wordle</button>
             <button id="tab-emoji" class="game-tab">🗿 Emoji Guess</button>
+            <button id="tab-image" class="game-tab">🖼️ Image Guess</button>
         </div>
 
         <!-- SELETOR DE MODOS -->
@@ -164,6 +165,52 @@
                 </div>
                 <div class="empty-state" id="emoji-empty-state">
                     <p>Enter a boss name to unlock the first emoji hint.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- SEÇÃO DE JOGO IMAGEM -->
+        <main class="game-main" id="image-view" style="display: none;">
+            <div class="image-display-section">
+                <div class="image-frame">
+                    <img id="boss-zoom-image" src="" alt="Guess the boss">
+                </div>
+                <p class="image-hint-text">Zoom decreases after every incorrect guess!</p>
+            </div>
+
+            <!-- Barra de Busca Imagem -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="input-wrapper">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="image-boss-search" placeholder="Type a boss name..." autocomplete="off">
+                    </div>
+                    <button id="btn-image-guess" disabled>Guess</button>
+                    
+                    <div class="suggestions-list" id="image-suggestions"></div>
+                </div>
+                <div class="attempts-count-wrapper">
+                    Attempts: <span id="image-attempts-count">0</span>
+                </div>
+            </section>
+
+            <!-- Tabela de Resultados Imagem -->
+            <section class="grid-section" style="max-width: 500px; margin: 0 auto;">
+                <div class="table-scroll-container">
+                    <table class="guess-table" id="image-guess-table" style="min-width: unset;">
+                        <thead>
+                            <tr>
+                                <th>Boss Guessed</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="image-guess-tbody">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="image-empty-state">
+                    <p>Enter a boss name to guess the zoomed image.</p>
                 </div>
             </section>
         </main>
@@ -288,5 +335,6 @@
     <script src="static/emojis.js"></script>
     <script src="static/app.js"></script>
     <script src="static/emoji_app.js"></script>
+    <script src="static/image_app.js"></script>
 </body>
 </html>
