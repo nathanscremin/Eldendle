@@ -52,7 +52,7 @@ def get_all_boss_names():
 def get_boss_details(boss_name: str):
     # Endpoint para o cliente pegar os dados do boss
     if boss_name not in BOSS_DATABASE:
-        raise HTTPException(status_code=404, detail="Boss não encontrado.")
+        raise HTTPException(status_code=404, detail="Boss not found.")
     return BOSS_DATABASE[boss_name]
     
 @app.post("/app/game/start")
@@ -69,34 +69,34 @@ def process_guess(game_id: str, guess_name: str):
     correct_boss_data = ACTIVE_GAMES.get(game_id)
 
     if not correct_boss_data:
-        raise HTTPException(status_code=404, detail="Sessão de jogo não encontrada. Inicie um novo jogo.")
+        raise HTTPException(status_code=404, detail="Game session not found. Start a new game.")
     if guess_name not in BOSS_DATABASE:
-        raise HTTPException(status_code=404, detail="Boss não encontrado.")
+        raise HTTPException(status_code=404, detail="Boss not found.")
     
     guess_data = Boss(**BOSS_DATABASE[guess_name])
     feedback = {}
-    feedback["nome"] = "correct" if guess_data.nome == correct_boss_data.nome else "incorrect"
-    feedback["tipo"] = "correct" if guess_data.tipo == correct_boss_data.tipo else "incorrect"
-    feedback["raca"] = "correct" if guess_data.raca == correct_boss_data.raca else "incorrect"
-    feedback["drop_principal"] = "correct" if guess_data.drop_principal == correct_boss_data.drop_principal else "incorrect"
-    feedback["obrigatorio"] = "correct" if guess_data.obrigatorio == correct_boss_data.obrigatorio else "incorrect"
+    feedback["name"] = "correct" if guess_data.name == correct_boss_data.name else "incorrect"
+    feedback["type"] = "correct" if guess_data.type == correct_boss_data.type else "incorrect"
+    feedback["race"] = "correct" if guess_data.race == correct_boss_data.race else "incorrect"
+    feedback["mandatory"] = "correct" if guess_data.mandatory == correct_boss_data.mandatory else "incorrect"
+    feedback["dlc"] = "correct" if guess_data.dlc == correct_boss_data.dlc else "incorrect"
 
-    if guess_data.localizacao_especifica == correct_boss_data.localizacao_especifica:
-        feedback["localizacao_especifica"] = "correct"
-        feedback["regiao"] = "correct"
-    elif guess_data.regiao == correct_boss_data.regiao:
-        feedback["localizacao_especifica"] = "incorrect"
-        feedback["regiao"] = "partial" 
+    if guess_data.specific_location == correct_boss_data.specific_location:
+        feedback["specific_location"] = "correct"
+        feedback["region"] = "correct"
+    elif guess_data.region == correct_boss_data.region:
+        feedback["specific_location"] = "incorrect"
+        feedback["region"] = "partial" 
     else:
-        feedback["localizacao_especifica"] = "incorrect"
-        feedback["regiao"] = "incorrect"
+        feedback["specific_location"] = "incorrect"
+        feedback["region"] = "incorrect"
         
-    if guess_data.fase == correct_boss_data.fase:
-        feedback["fase"] = "correct"
-    elif guess_data.fase < correct_boss_data.fase:
-        feedback["fase"] = "higher" 
+    if guess_data.phase == correct_boss_data.phase:
+        feedback["phase"] = "correct"
+    elif guess_data.phase < correct_boss_data.phase:
+        feedback["phase"] = "higher" 
     else:
-        feedback["fase"] = "lower" 
+        feedback["phase"] = "lower" 
 
     if guess_data.runes == correct_boss_data.runes:
         feedback["runes"] = "correct"
@@ -112,10 +112,10 @@ def get_game_hint(game_id: str):
     # Retorna uma dica para o jogo
     correct_boss = ACTIVE_GAMES.get(game_id)
     if not correct_boss:
-        raise HTTPException(status_code=404, detail="Sessão de jogo não encontrada.")
+        raise HTTPException(status_code=404, detail="Game session not found.")
     
     # Mascara o nome do boss deixando apenas a primeira letra de cada palavra
-    words = correct_boss.nome.split(" ")
+    words = correct_boss.name.split(" ")
     masked_words = []
     for word in words:
         if len(word) > 1:
@@ -128,34 +128,15 @@ def get_game_hint(game_id: str):
     
     return {
         "masked_name": masked_name,
-        "regiao": correct_boss.regiao,
-        "raca": correct_boss.raca,
-        "tipo": correct_boss.tipo,
-        "obrigatorio": "Yes" if correct_boss.obrigatorio else "No"
+        "region": correct_boss.region,
+        "race": correct_boss.race,
+        "type": correct_boss.type,
+        "mandatory": "Yes" if correct_boss.mandatory else "No"
     }
 
 @app.get("/api/boss/image/{boss_name}")
 def get_boss_image(boss_name: str):
-    import urllib.request
-    import urllib.parse
-    import json
-    import ssl
     from fastapi.responses import RedirectResponse
-    
-    query = urllib.parse.quote(boss_name)
-    api_url = f"https://eldenring.fandom.com/api.php?action=query&prop=pageimages&titles={query}&pithumbsize=200&format=json"
-    
-    try:
-        req = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
-        context = ssl._create_unverified_context()
-        with urllib.request.urlopen(req, timeout=5, context=context) as response:
-            data = json.loads(response.read().decode('utf-8'))
-            pages = data.get("query", {}).get("pages", {})
-            for page_id, page_data in pages.items():
-                if "thumbnail" in page_data:
-                    return RedirectResponse(url=page_data["thumbnail"]["source"], status_code=302)
-    except Exception as e:
-        print(f"Erro ao buscar imagem no Fandom para {boss_name}: {e}")
-    
-    # Fallback logo
+    if boss_name in BOSS_DATABASE:
+        return RedirectResponse(url=BOSS_DATABASE[boss_name]["image_url"], status_code=302)
     return RedirectResponse(url="https://static.wikia.nocookie.net/eldenring/images/1/10/Elden_Ring_logo.png/revision/latest/scale-to-width-down/200", status_code=302)

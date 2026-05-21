@@ -4,26 +4,26 @@ url = 'http://127.0.0.1:8000/'
 try:
     resposta_status = requests.get(url)
     if resposta_status.status_code == 200:
-        print(f'CÓDIGO [{resposta_status.status_code}] - Conexão com o servidor realizada com êxito!')
+        print(f'CODE [{resposta_status.status_code}] - Connection to the server successful!')
     elif resposta_status.status_code == 404:
-        print(f'CÓDIGO [{resposta_status.status_code}] - Servidor não encontrado no endereço!')
+        print(f'CODE [{resposta_status.status_code}] - Server not found at address!')
     elif resposta_status.status_code == 500:
-        print(f'CÓDIGO [{resposta_status.status_code}] - O servidor não conseguiu processar o pedido inicial!')
+        print(f'CODE [{resposta_status.status_code}] - Server failed to process the initial request!')
     else:
-        print(f'CÓDIGO [{resposta_status.status_code}] - Erro desconhecido na conexão.')
+        print(f'CODE [{resposta_status.status_code}] - Unknown connection error.')
 
 except requests.exceptions.ConnectionError:
-    print(f'FALHA NA CONEXÃO - Não foi possível conectar ao servidor em {url}')
-    print('Verifique o endereço IP, a porta e se o servidor do seu amigo está online.')
+    print(f'CONNECTION FAILED - Could not connect to the server at {url}')
+    print('Check the IP address, port, and if the server is online.')
     exit()
 
 try:
     start = requests.post(url + "app/game/start")
     start.raise_for_status() 
     game_id = start.json()['game_id']
-    print(f'Jogo iniciado! Game ID: {game_id}')
+    print(f'Game started! Game ID: {game_id}')
 except requests.exceptions.RequestException as e:
-    print(f'Erro ao iniciar o jogo: {e}')
+    print(f'Error starting the game: {e}')
     exit()
 
 def mostrar_lista_bosses():
@@ -31,27 +31,27 @@ def mostrar_lista_bosses():
         response = requests.get(url + "api/bosses/names")
         if response.status_code == 200:
             boss_names = response.json()
-            print("\n--- Lista de Bosses de Elden Ring ---")
+            print("\n--- Elden Ring Boss List ---")
             for name in boss_names:
                 print(f"- {name}")
             print("--------------------------------------\n")
         else:
-            print(f'CÓDIGO [{response.status_code}] - Erro ao buscar a lista de bosses.')
+            print(f'CODE [{response.status_code}] - Error fetching the boss list.')
     except requests.exceptions.RequestException as e:
-        print(f'Erro de conexão ao buscar lista: {e}')
+        print(f'Connection error fetching list: {e}')
 
 while True:
-    print("O que você deseja fazer?")
-    print("1 - Fazer um palpite")
-    print("2 - Ver a lista de bosses")
-    print("S - Sair do jogo")
+    print("What would you like to do?")
+    print("1 - Make a guess")
+    print("2 - View the boss list")
+    print("Q - Quit the game")
     
-    escolha = input("Digite sua escolha (1, 2 ou S): ").strip().upper()
+    escolha = input("Enter your choice (1, 2, or Q): ").strip().upper()
     print(' ') 
 
     if escolha == '1':
-        # Fazer um palpite
-        guess_name = input('Qual boss é esse? ')
+        # Make a guess
+        guess_name = input('Which boss is this? ')
         try:
             resposta_nome = requests.post(url + 'api/guess/' + game_id + '/' + guess_name)
 
@@ -66,15 +66,15 @@ while True:
 
                 if acertou:
                     print(' ')
-                    print('Parabéns, você ganhou!')
+                    print('Congratulations, you won!')
                     print(' ')
-                    print("--- Detalhes Finais ---")
+                    print("--- Final Details ---")
                     for chave, valor in resultado.items():
                         print(f'{chave}: {valor}')
                     print("------------------------")
                     break 
                 else:
-                    print("\n--- Dicas do Palpite ---")
+                    print("\n--- Guess Hints ---")
                     texto_formatado = ""
                     for chave, valor in resultado.items():
                         texto_formatado += f'{chave}: {valor}\n'
@@ -82,22 +82,21 @@ while True:
                     print("--------------------------")
 
             elif resposta_nome.status_code == 404:
-                print(f'CÓDIGO [{resposta_nome.status_code}] - Boss "{guess_name}" não encontrado na base de dados!')
+                print(f'CODE [{resposta_nome.status_code}] - Boss "{guess_name}" not found in the database!')
             elif resposta_nome.status_code == 500:
-                print(f'CÓDIGO [{resposta_nome.status_code}] - Erro no d servidor ao processar o palpite!')
+                print(f'CODE [{resposta_nome.status_code}] - Server error processing the guess!')
             else:
-                print(f'CÓDIGO [{resposta_nome.status_code}] - Erro desconhecido ao enviar palpite.')
+                print(f'CODE [{resposta_nome.status_code}] - Unknown error submitting guess.')
         
         except requests.exceptions.RequestException as e:
-            print(f'Erro de conexão ao enviar palpite: {e}')
+            print(f'Connection error submitting guess: {e}')
 
     elif escolha == '2':
         mostrar_lista_bosses()
 
-    elif escolha == 'S':
-        print("Obrigado por jogar!")
+    elif escolha == 'Q' or escolha == 'S':
+        print("Thanks for playing!")
         break
     
     else:
-
-        print("Opção inválida. Por favor, digite '1', '2' ou 'S'.")
+        print("Invalid option. Please enter '1', '2', or 'Q'.")

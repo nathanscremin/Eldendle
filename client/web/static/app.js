@@ -105,9 +105,9 @@ async function restoreSession() {
             openModal(modalVictory);
         }
 
-        console.log(`Sessão restaurada com sucesso: ${gameId}`);
+        console.log(`Session restored successfully: ${gameId}`);
     } catch (error) {
-        console.error('Erro ao restaurar sessão anterior:', error);
+        console.error('Error restoring previous session:', error);
         localStorage.removeItem('eldendle_session');
         await startNewGame();
     }
@@ -142,10 +142,10 @@ function checkHintButtonAvailability() {
 function formatHintText(data) {
     if (!data) return '';
     return `
-        <strong>Nome:</strong> <code>${data.masked_name}</code><br>
-        <strong>Região:</strong> ${data.regiao}<br>
-        <strong>Tipo:</strong> ${data.tipo} | <strong>Raça:</strong> ${data.raca}<br>
-        <strong>Obrigatório:</strong> ${data.obrigatorio}
+        <strong>Name:</strong> <code>${data.masked_name}</code><br>
+        <strong>Region:</strong> ${data.region}<br>
+        <strong>Type:</strong> ${data.type} | <strong>Race:</strong> ${data.race}<br>
+        <strong>Mandatory:</strong> ${data.mandatory} | <strong>DLC:</strong> ${data.dlc}
     `;
 }
 
@@ -182,14 +182,14 @@ async function startNewGame() {
         btnGuess.disabled = true;
         
         const response = await fetch('/app/game/start', { method: 'POST' });
-        if (!response.ok) throw new Error('Não foi possível iniciar o jogo.');
+        if (!response.ok) throw new Error('Could not start the game.');
         
         const data = await response.json();
         gameId = data.game_id;
-        console.log(`Nova sessão criada: ${gameId}`);
+        console.log(`New session created: ${gameId}`);
     } catch (error) {
-        console.error('Erro ao iniciar o jogo:', error);
-        alert('Erro ao conectar com o servidor. Certifique-se de que o backend FastAPI está rodando!');
+        console.error('Error starting the game:', error);
+        alert('Error connecting to the server. Make sure the FastAPI backend is running!');
     }
 }
 
@@ -197,12 +197,12 @@ async function startNewGame() {
 async function loadBossList() {
     try {
         const response = await fetch('/api/bosses/names');
-        if (!response.ok) throw new Error('Erro ao carregar chefes.');
+        if (!response.ok) throw new Error('Error loading bosses.');
         
         allBosses = await response.json();
-        console.log(`Total de bosses carregados: ${allBosses.length}`);
+        console.log(`Total bosses loaded: ${allBosses.length}`);
     } catch (error) {
-        console.error('Erro ao carregar lista de bosses:', error);
+        console.error('Error loading boss list:', error);
     }
 }
 
@@ -210,10 +210,10 @@ async function loadBossList() {
 async function getBossDetails(bossName) {
     try {
         const response = await fetch(`/api/boss/details/${encodeURIComponent(bossName)}`);
-        if (!response.ok) throw new Error('Erro ao buscar detalhes do chefe.');
+        if (!response.ok) throw new Error('Error fetching boss details.');
         return await response.json();
     } catch (error) {
-        console.error(`Erro ao buscar detalhes de ${bossName}:`, error);
+        console.error(`Error fetching details for ${bossName}:`, error);
         return null;
     }
 }
@@ -235,8 +235,8 @@ async function submitGuess(guessName) {
             if (responseGuess.status === 404) {
                 try {
                     const errData = await responseGuess.json();
-                    if (errData.detail && errData.detail.includes("Sessão")) {
-                        alert("Sua sessão de jogo expirou ou o servidor foi reiniciado. Um novo jogo será iniciado.");
+                    if (errData.detail && errData.detail.includes("session")) {
+                        alert("Your game session has expired or the server was restarted. A new game will begin.");
                         localStorage.removeItem('eldendle_session');
                         await startNewGame();
                         return;
@@ -246,7 +246,7 @@ async function submitGuess(guessName) {
                 }
                 alert(`O boss "${guessName}" não foi encontrado no banco de dados!`);
             } else {
-                throw new Error('Falha no processamento do palpite.');
+                throw new Error('Failed to process guess.');
             }
             inputSearch.disabled = false;
             return;
@@ -257,7 +257,7 @@ async function submitGuess(guessName) {
         // Busca os detalhes do chefe que foi chutado para colocar na tela
         const bossDetails = await getBossDetails(guessName);
         if (!bossDetails) {
-            alert('Não foi possível carregar os detalhes do boss chutado.');
+            alert('Could not load details for the guessed boss.');
             inputSearch.disabled = false;
             return;
         }
@@ -286,8 +286,8 @@ async function submitGuess(guessName) {
             handleVictory(bossDetails);
         }
     } catch (error) {
-        console.error('Erro ao enviar palpite:', error);
-        alert('Ocorreu um erro ao enviar seu palpite.');
+        console.error('Error submitting guess:', error);
+        alert('An error occurred while submitting your guess.');
         inputSearch.disabled = false;
     }
 }
@@ -301,71 +301,70 @@ function addGuessRowToTable(boss, feedback) {
     const row = document.createElement('tr');
     row.className = 'guess-row';
 
-    // Criação dos conteúdos de cada célula formatada em português
-    const formatSimNao = (bool) => bool ? 'Sim' : 'Não';
-    const formatMilhares = (num) => num.toLocaleString('pt-BR');
+    // Criação dos conteúdos de cada célula formatada em inglês
+    const formatYesNo = (bool) => bool ? 'Yes' : 'No';
+    const formatThousands = (num) => num.toLocaleString('en-US');
 
-    // 1. BOSS (Nome + Imagem)
+    // 1. BOSS (Name + Image)
     const tdBoss = document.createElement('td');
-    tdBoss.className = getCellClass(feedback.nome);
-    const bossImgUrl = getBossImageUrl(boss.nome);
-    const fallbackImgUrl = getBossImageUrl('');
+    tdBoss.className = getCellClass(feedback.name);
+    const bossImgUrl = getBossImageUrl(boss.name);
     tdBoss.innerHTML = `
-        <div class="boss-cell-content" style="cursor: pointer;" onclick="window.open('https://www.google.com/search?tbm=isch&q=Elden+Ring+${encodeURIComponent(boss.nome)}', '_blank')" title="Pesquisar imagens no Google">
-            <img class="boss-cell-img" src="${bossImgUrl}" onerror="this.src='${fallbackImgUrl}'" alt="${boss.nome}">
-            <span class="boss-cell-name" title="${boss.nome}">${boss.nome}</span>
+        <div class="boss-cell-content" style="cursor: pointer;" onclick="window.open('https://www.google.com/search?tbm=isch&q=Elden+Ring+${encodeURIComponent(boss.name)}', '_blank')" title="Search images on Google">
+            <img class="boss-cell-img" src="${bossImgUrl}" alt="${boss.name}" referrerpolicy="no-referrer">
+            <span class="boss-cell-name" title="${boss.name}">${boss.name}</span>
         </div>
     `;
 
-    // 2. REGIAO
+    // 2. REGION
     const tdRegiao = document.createElement('td');
-    tdRegiao.className = getCellClass(feedback.regiao);
-    tdRegiao.textContent = boss.regiao;
+    tdRegiao.className = getCellClass(feedback.region);
+    tdRegiao.textContent = boss.region;
 
-    // 3. FASE (Com setas se maior/menor)
+    // 3. PHASE (Com setas se maior/menor)
     const tdFase = document.createElement('td');
-    tdFase.className = getCellClass(feedback.fase);
-    tdFase.innerHTML = renderNumericCell(boss.fase, feedback.fase);
+    tdFase.className = getCellClass(feedback.phase);
+    tdFase.innerHTML = renderNumericCell(boss.phase, feedback.phase);
 
-    // 4. TIPO
+    // 4. TYPE
     const tdTipo = document.createElement('td');
-    tdTipo.className = getCellClass(feedback.tipo);
-    tdTipo.textContent = translateTipo(boss.tipo);
+    tdTipo.className = getCellClass(feedback.type);
+    tdTipo.textContent = boss.type;
 
-    // 5. RAÇA
+    // 5. RACE
     const tdRaca = document.createElement('td');
-    tdRaca.className = getCellClass(feedback.raca);
-    tdRaca.textContent = translateRaca(boss.raca);
+    tdRaca.className = getCellClass(feedback.race);
+    tdRaca.textContent = boss.race;
 
-    // 6. LOCALIZAÇÃO ESPECÍFICA
+    // 6. SPECIFIC LOCATION
     const tdLocalizacao = document.createElement('td');
-    tdLocalizacao.className = getCellClass(feedback.localizacao_especifica);
-    tdLocalizacao.textContent = boss.localizacao_especifica;
+    tdLocalizacao.className = getCellClass(feedback.specific_location);
+    tdLocalizacao.textContent = boss.specific_location;
 
-    // 7. DROP PRINCIPAL
-    const tdDrop = document.createElement('td');
-    tdDrop.className = getCellClass(feedback.drop_principal);
-    tdDrop.textContent = boss.drop_principal;
-
-    // 8. OBRIGATÓRIO
+    // 7. MANDATORY
     const tdObrigatorio = document.createElement('td');
-    tdObrigatorio.className = getCellClass(feedback.obrigatorio);
-    tdObrigatorio.textContent = formatSimNao(boss.obrigatorio);
+    tdObrigatorio.className = getCellClass(feedback.mandatory);
+    tdObrigatorio.textContent = formatYesNo(boss.mandatory);
 
-    // 9. RUNAS (Com setas se maior/menor)
+    // 8. DLC
+    const tdDlc = document.createElement('td');
+    tdDlc.className = getCellClass(feedback.dlc);
+    tdDlc.textContent = formatYesNo(boss.dlc);
+
+    // 9. RUNES (with arrows if higher/lower)
     const tdRunas = document.createElement('td');
     tdRunas.className = getCellClass(feedback.runes);
-    tdRunas.innerHTML = renderNumericCell(formatMilhares(boss.runes), feedback.runes);
+    tdRunas.innerHTML = renderNumericCell(formatThousands(boss.runes), feedback.runes);
 
-    // Adiciona as células na linha
+    // Add cells to the row
     row.appendChild(tdBoss);
     row.appendChild(tdRegiao);
     row.appendChild(tdFase);
     row.appendChild(tdTipo);
     row.appendChild(tdRaca);
     row.appendChild(tdLocalizacao);
-    row.appendChild(tdDrop);
     row.appendChild(tdObrigatorio);
+    row.appendChild(tdDlc);
     row.appendChild(tdRunas);
 
     // Insere no topo da tabela de palpites para melhor visibilidade
@@ -388,38 +387,9 @@ function renderNumericCell(val, status) {
     return `
         <div class="cell-numeric">
             <span>${val}</span>
-            <span class="arrow-indicator" title="${status === 'higher' ? 'O valor correto é maior' : 'O valor correto é menor'}">${arrow}</span>
+            <span class="arrow-indicator" title="${status === 'higher' ? 'The correct value is higher' : 'The correct value is lower'}">${arrow}</span>
         </div>
     `;
-}
-
-// Tradução de Tipos
-function translateTipo(tipo) {
-    const traducoes = {
-        'Demigod': 'Semideus',
-        'Legend': 'Lenda',
-        'God': 'Deus',
-        'Great Enemy': 'Grande Inimigo',
-        'Enemy': 'Inimigo'
-    };
-    return traducoes[tipo] || tipo;
-}
-
-// Tradução de Raças
-function translateRaca(raca) {
-    const traducoes = {
-        'Humanoid': 'Humanoide',
-        'Beast': 'Fera',
-        'Serpent': 'Serpente',
-        'Omen': 'Augúrio',
-        'Giant': 'Gigante',
-        'Dragon': 'Dragão',
-        'Spirit': 'Espírito',
-        'Malformed Star': 'Estrela Deformada',
-        'Avatar': 'Avatar',
-        'Gargoyle': 'Gárgula'
-    };
-    return traducoes[raca] || raca;
 }
 
 // ==========================================================================
@@ -454,10 +424,9 @@ function updateSuggestions(query) {
 
         // Foto miniatura baseada no nome usando a nova API
         const bossImgUrl = getBossImageUrl(name);
-        const fallbackImgUrl = getBossImageUrl('');
         
         item.innerHTML = `
-            <img class="suggestion-img" src="${bossImgUrl}" onerror="this.src='${fallbackImgUrl}'" alt="${name}">
+            <img class="suggestion-img" src="${bossImgUrl}" alt="${name}">
             <span class="suggestion-name">${name}</span>
         `;
 
@@ -499,11 +468,19 @@ function handleKeyboardNavigation(e) {
         highlightSuggestion(items);
     } else if (e.key === 'Enter') {
         if (currentSelectionIndex > -1) {
+            // Highlighted item → submit it directly
             e.preventDefault();
             const selectedName = items[currentSelectionIndex].dataset.name;
-            selectSuggestion(selectedName);
+            closeSuggestions();
+            submitGuess(selectedName);
+        } else if (items.length > 0) {
+            // QoL: No item highlighted but list is open → submit first item
+            e.preventDefault();
+            const firstName = items[0].dataset.name;
+            closeSuggestions();
+            submitGuess(firstName);
         } else {
-            // Chuta direto o texto escrito se coincidir exatamente
+            // Fall back: exact match on typed text
             const matchedName = allBosses.find(name => name.toLowerCase() === inputSearch.value.trim().toLowerCase());
             if (matchedName && !guessedBosses.includes(matchedName)) {
                 e.preventDefault();
@@ -560,21 +537,21 @@ function updateStatsDisplay() {
 
 function renderVictoryModal(boss) {
     const victoryImg = document.getElementById('victory-boss-img');
-    victoryImg.src = getBossImageUrl(boss.nome);
+    victoryImg.src = getBossImageUrl(boss.name);
     
-    document.getElementById('victory-boss-name').textContent = boss.nome;
+    document.getElementById('victory-boss-name').textContent = boss.name;
     
     const showcase = document.getElementById('victory-boss-showcase');
     showcase.style.cursor = 'pointer';
-    showcase.title = 'Pesquisar imagens no Google';
-    showcase.onclick = () => window.open(`https://www.google.com/search?tbm=isch&q=Elden+Ring+${encodeURIComponent(boss.nome)}`, '_blank');
+    showcase.title = 'Search images on Google';
+    showcase.onclick = () => window.open(`https://www.google.com/search?tbm=isch&q=Elden+Ring+${encodeURIComponent(boss.name)}`, '_blank');
     
-    const formatMilhares = (num) => num.toLocaleString('pt-BR');
+    const formatThousands = (num) => num.toLocaleString('en-US');
     document.getElementById('victory-boss-details').innerHTML = `
-        <strong>Região:</strong> ${boss.regiao} (${boss.localizacao_especifica})<br>
-        <strong>Tipo:</strong> ${translateTipo(boss.tipo)} | <strong>Raça:</strong> ${translateRaca(boss.raca)}<br>
-        <strong>Fase:</strong> ${boss.fase} | <strong>Drop:</strong> ${boss.drop_principal}<br>
-        <strong>Runas:</strong> ${formatMilhares(boss.runes)} | <strong>Obrigatório:</strong> ${boss.obrigatorio ? 'Sim' : 'Não'}
+        <strong>Region:</strong> ${boss.region} (${boss.specific_location})<br>
+        <strong>Type:</strong> ${boss.type} | <strong>Race:</strong> ${boss.race}<br>
+        <strong>Phase:</strong> ${boss.phase} | <strong>Mandatory:</strong> ${boss.mandatory ? 'Yes' : 'No'}<br>
+        <strong>DLC:</strong> ${boss.dlc ? 'Yes' : 'No'} | <strong>Runes:</strong> ${formatThousands(boss.runes)}
     `;
 
     document.getElementById('victory-attempts').textContent = guessedBosses.length;
@@ -664,10 +641,10 @@ function setupEventListeners() {
 
     // Resetar estatísticas
     btnResetStats.addEventListener('click', () => {
-        if (confirm('Tem certeza de que deseja zerar todas as suas estatísticas de jogo? Isso não poderá ser desfeito.')) {
+        if (confirm('Are you sure you want to reset all your game statistics? This cannot be undone.')) {
             const stats = { played: 0, won: 0, streak: 0, maxStreak: 0 };
             saveStats(stats);
-            alert('Estatísticas redefinidas com sucesso.');
+            alert('Statistics reset successfully.');
             closeAllModals();
         }
     });
@@ -686,14 +663,14 @@ function setupEventListeners() {
             try {
                 btnHint.disabled = true;
                 const response = await fetch(`/api/game/hint/${gameId}`);
-                if (!response.ok) throw new Error('Erro ao buscar dica.');
+                if (!response.ok) throw new Error('Error fetching hint.');
                 
                 sessionHintData = await response.json();
                 saveSession();
                 checkHintButtonAvailability();
             } catch (error) {
-                console.error('Erro ao buscar dica:', error);
-                alert('Ocorreu um erro ao obter a dica. Certifique-se de que o servidor está rodando.');
+                console.error('Error fetching hint:', error);
+                alert('An error occurred while obtaining the hint. Make sure the server is running.');
             } finally {
                 btnHint.disabled = false;
             }
