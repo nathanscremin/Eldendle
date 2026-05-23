@@ -152,7 +152,7 @@
             }
         });
 
-        if (emojiIsGameOver || emojiGuessedBosses.length >= 5) {
+        if (emojiIsGameOver) {
             emojiInputSearch.disabled = true;
             btnEmojiGuess.disabled = true;
         } else {

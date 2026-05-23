@@ -584,7 +584,8 @@ function handleVictory(boss, attempts) {
 
     // Verifica Conquistas
     if (window.checkAchievements) {
-        window.checkAchievements(stats, attempts, false); // Add hint support later if needed
+        const usedHint = sessionHintData !== null;
+        window.checkAchievements(stats, attempts, usedHint);
     }
 
     // Atraso sutil para o jogador ver as células terminarem o flip antes do modal de vitória

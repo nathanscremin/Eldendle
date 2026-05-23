@@ -112,24 +112,24 @@ function generateShareText() {
     if (isClassic) {
         // Build classic share based on guessedBosses
         const attempts = document.getElementById('victory-attempts').textContent;
-        text += \`📜 Classic: \${attempts}/8\\n\\n\`;
+        text += \`📜 Classic: \${attempts} attempts\\n\\n\`;
         
         // We need to fetch the session state. It's stored in app.js global variables, 
         // but since they might be encapsulated, we can read localStorage or DOM directly!
         const rows = document.querySelectorAll('#guess-tbody .guess-row');
         rows.forEach(row => {
-            const cells = row.querySelectorAll('.guess-cell');
+            const cells = row.querySelectorAll('td');
             cells.forEach(cell => {
-                if (cell.classList.contains('correct')) text += '🟩';
-                else if (cell.classList.contains('partial')) text += '🟨';
-                else if (cell.classList.contains('incorrect')) text += '🟥';
+                if (cell.classList.contains('cell-correct')) text += '🟩';
+                else if (cell.classList.contains('cell-partial')) text += '🟨';
+                else if (cell.classList.contains('cell-incorrect')) text += '🟥';
             });
             text += '\\n';
         });
     } 
     else if (isEmoji) {
         const attempts = document.getElementById('victory-attempts').textContent;
-        text += \`🗿 Emoji Guess: \${attempts}/5\\n\\n\`;
+        text += \`🗿 Emoji Guess: \${attempts} attempts\\n\\n\`;
         
         const count = parseInt(attempts) || 1;
         for(let i=0; i<count-1; i++) text += '🗿';
