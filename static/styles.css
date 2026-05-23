@@ -291,7 +291,7 @@ body {
     pointer-events: none;
 }
 
-#btn-guess, #btn-emoji-guess {
+#btn-guess, #btn-emoji-guess, #btn-image-guess {
     background: linear-gradient(135deg, #c19b48 0%, #9a7522 100%);
     border: 1px solid #705312;
     border-radius: 8px;
@@ -306,17 +306,17 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-#btn-guess:hover:not(:disabled), #btn-emoji-guess:hover:not(:disabled) {
+#btn-guess:hover:not(:disabled), #btn-emoji-guess:hover:not(:disabled), #btn-image-guess:hover:not(:disabled) {
     background: linear-gradient(135deg, #d8b765 0%, #b8923b 100%);
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
     transform: translateY(-1px);
 }
 
-#btn-guess:active:not(:disabled), #btn-emoji-guess:active:not(:disabled) {
+#btn-guess:active:not(:disabled), #btn-emoji-guess:active:not(:disabled), #btn-image-guess:active:not(:disabled) {
     transform: translateY(1px);
 }
 
-#btn-guess:disabled, #btn-emoji-guess:disabled {
+#btn-guess:disabled, #btn-emoji-guess:disabled, #btn-image-guess:disabled {
     background: #202025;
     border-color: #303035;
     color: #55555d;
