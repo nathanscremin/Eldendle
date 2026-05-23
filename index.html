@@ -25,7 +25,7 @@
             </button>
 
             <div class="logo-container">
-                <!-- SVG detalhado da Elden Ring estilizado -->
+                <!-- SVG detalhado da Elden Ring estilizado (Corrigido o eixo Y inferior para 54) -->
                 <svg class="elden-ring-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                     <!-- Círculo Superior -->
                     <circle cx="50" cy="38" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
@@ -33,8 +33,8 @@
                     <circle cx="40" cy="54" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
                     <!-- Círculo Central Direito -->
                     <circle cx="60" cy="54" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
-                    <!-- Círculo Inferior -->
-                    <circle cx="50" cy="70" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
+                    <!-- Círculo Inferior (agora nivelado e cruzando com o esquerdo/direito) -->
+                    <circle cx="50" cy="54" r="22" fill="none" stroke="#d4af37" stroke-width="1.8" stroke-opacity="0.8" />
                     <!-- Arco de Runas Cruzando verticalmente -->
                     <path d="M50,10 L50,90" stroke="#d4af37" stroke-width="1.5" stroke-opacity="0.6" stroke-dasharray="2,2" />
                     <!-- Arco curvado na base (Runa de Radagon) -->
@@ -44,10 +44,16 @@
                 <p class="logo-subtitle">Guess the Elden Ring Boss</p>
             </div>
 
-            <button class="header-btn" id="btn-stats" title="Statistics">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                <span>Statistics</span>
-            </button>
+            <div style="display: flex; gap: 8px;">
+                <button class="header-btn" id="btn-achievements" title="Achievements">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                    <span class="desktop-only">Achievements</span>
+                </button>
+                <button class="header-btn" id="btn-stats" title="Statistics">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span class="desktop-only">Statistics</span>
+                </button>
+            </div>
         </header>
 
         <!-- NAVEGADOR DE JOGOS -->
@@ -270,11 +276,19 @@
     <!-- MODAL 2: ESTATÍSTICAS -->
     <div class="modal-overlay" id="modal-stats">
         <div class="modal-card">
-            <div class="modal-header">
-                <h2>Your Statistics</h2>
-                <button class="close-btn">&times;</button>
+                  <div class="modal-header">
+                <h2>Statistics</h2>
+                <div class="modal-actions-right">
+                    <button class="icon-btn-danger" id="btn-reset-stats" title="Reset Statistics">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                    </button>
+                    <button class="icon-btn-danger hard-reset" id="btn-hard-reset" title="Hard Reset (Wipe Save)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    </button>
+                    <button class="close-btn">&times;</button>
+                </div>
             </div>
-            <div class="modal-body">
+            <div class="modal-body text-center">
                 <div class="stats-grid">
                     <div class="stat-box">
                         <span class="stat-value" id="stat-played">0</span>
@@ -293,18 +307,26 @@
                         <span class="stat-label">Max Streak</span>
                     </div>
                 </div>
-
-                <button class="btn-primary" id="btn-reset-stats" style="margin: 20px auto 10px; display: block; background: #8f1f26;">
-                    Reset Statistics
-                </button>
-                <button class="btn-primary" id="btn-hard-reset" style="margin: 0 auto; display: block; background: #551111; font-size: 0.8rem; padding: 8px 16px;">
-                    Hard Reset (Clear Cache)
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 3: VITÓRIA (INIMIGO DERRUBADO) -->
+    <!-- MODAL 3: CONQUISTAS (NOVO) -->
+    <div class="modal-overlay" id="modal-achievements">
+        <div class="modal-card achievements-card">
+            <div class="modal-header">
+                <h2>Achievements</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="achievements-list" id="achievements-list">
+                    <!-- Gerado dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <!-- MODAL 4: VITÓRIA (INIMIGO DERRUBADO) -->
     <div class="modal-overlay" id="modal-victory">
         <div class="modal-card victory-card">
             <div class="victory-banner">
@@ -325,7 +347,12 @@
                     <p>Guesses needed: <strong id="victory-attempts">0</strong></p>
                 </div>
 
-                <button class="btn-primary" id="btn-restart">Play Again</button>
+                <div class="victory-actions" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                    <button class="btn-primary" id="btn-share" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        Share <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-top; margin-left: 5px;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                    </button>
+                    <button class="btn-primary" id="btn-restart">Play Again</button>
+                </div>
             </div>
         </div>
     </div>
@@ -333,6 +360,7 @@
     <!-- Javascript do Jogo -->
     <script src="static/database.js"></script>
     <script src="static/emojis.js"></script>
+    <script src="static/achievements.js"></script>
     <script src="static/app.js"></script>
     <script src="static/emoji_app.js"></script>
     <script src="static/image_app.js"></script>

@@ -1065,3 +1065,139 @@ body {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ==========================================================================
+   SHARE BUTTON & ACHIEVEMENTS CSS
+   ========================================================================== */
+
+#btn-share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#btn-share:hover {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+}
+
+.modal-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-btn-danger {
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn-danger:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.icon-btn-danger.hard-reset:hover {
+    color: #fca5a5;
+    background: #7f1d1d;
+}
+
+.achievements-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    background: #1e1e24;
+    border: 1px solid #303035;
+    border-radius: 8px;
+    padding: 12px;
+    opacity: 0.5;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+}
+
+.achievement-item.unlocked {
+    opacity: 1;
+    filter: grayscale(0%);
+    border-color: #d4af37;
+    background: linear-gradient(to right, #252015, #1e1e24);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.achievement-details h4 {
+    margin: 0 0 4px 0;
+    color: #e0e0e0;
+    font-family: 'Cinzel', serif;
+}
+
+.achievement-item.unlocked .achievement-details h4 {
+    color: #d4af37;
+}
+
+.achievement-details p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.toast-notification {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(15, 15, 15, 0.95);
+    border: 1px solid #d4af37;
+    color: #f5f5f5;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+}
+
+.toast-content h4 {
+    margin: 0 0 2px 0;
+    color: #d4af37;
+    font-size: 0.9rem;
+    font-family: 'Cinzel', serif;
+}
+
+.toast-content p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #ccc;
+}

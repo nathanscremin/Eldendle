@@ -111,7 +111,7 @@
         }
     };
 
-    async function imageStartNewGame() {
+    window.imageStartNewGame = async function() {
         if (validImageBosses.length === 0) buildValidBossesList();
 
         imgIsGameOver = false;

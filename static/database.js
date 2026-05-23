@@ -133,7 +133,7 @@ const BOSS_DATABASE = {
     },
     "Mohg, Lord of Blood": {
         "name": "Mohg, Lord of Blood",
-        "region": "Siofra River",
+        "region": "Mohgwyn Palace",
         "phase": 2,
         "type": "Demigod",
         "race": "Omen",
@@ -249,7 +249,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 1000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Pumpkin_Head.jpg"
     },
     "Flying Dragon Agheel": {
         "name": "Flying Dragon Agheel",
@@ -329,7 +329,7 @@ const BOSS_DATABASE = {
         "phase": 1,
         "type": "Greater Enemy",
         "race": "Troll",
-        "specific_location": "Old Altus Tunnel",
+        "specific_location": "Limgrave Tunnels",
         "mandatory": false,
         "dlc": false,
         "runes": 1500,
@@ -381,7 +381,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 3300,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Bell_Bearing_Hunter.jpg"
     },
     "Erdtree Burial Watchdog": {
         "name": "Erdtree Burial Watchdog",
@@ -401,7 +401,7 @@ const BOSS_DATABASE = {
         "phase": 1,
         "type": "Greater Enemy",
         "race": "Demi-Human",
-        "specific_location": "Lenne's Rise",
+        "specific_location": "Coastal Cave",
         "mandatory": false,
         "dlc": false,
         "runes": 1200,
@@ -429,11 +429,11 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 1000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Scaly_Misbegotten.jpg"
     },
     "Bloodhound Knight": {
         "name": "Bloodhound Knight",
-        "region": "Limgrave",
+        "region": "Mt. Gelmir",
         "phase": 1,
         "type": "Greater Enemy",
         "race": "Beast",
@@ -465,7 +465,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 10000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Royal_Knight_Loretta.jpg"
     },
     "Glintstone Dragon Smarag": {
         "name": "Glintstone Dragon Smarag",
@@ -513,7 +513,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 18000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Magma_Wyrm_Makar.jpg"
     },
     "Crystalian": {
         "name": "Crystalian",
@@ -561,7 +561,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 1900,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Spirit-Caller_Snail.jpg"
     },
     "Nox Swordstress & Nox Priest": {
         "name": "Nox Swordstress & Nox Priest",
@@ -569,11 +569,11 @@ const BOSS_DATABASE = {
         "phase": 1,
         "type": "Greater Enemy",
         "race": "Humanoid",
-        "specific_location": "Eternal City of Nokstella",
+        "specific_location": "Nokron, Eternal City",
         "mandatory": false,
         "dlc": false,
         "runes": 7800,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Nox_Swordstress__Nox_Priest.jpg"
     },
     "Cemetery Shade": {
         "name": "Cemetery Shade",
@@ -669,7 +669,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 24000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Putrid_Avatar.jpg"
     },
     "Battlemage Hugues": {
         "name": "Battlemage Hugues",
@@ -681,7 +681,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 8400,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Battlemage_Hugues.jpg"
     },
     "Bell Bearing Hunter (Caelid)": {
         "name": "Bell Bearing Hunter (Caelid)",
@@ -693,7 +693,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 39000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Bell_Bearing_Hunter_Caelid.jpg"
     },
     "Cleanrot Knight": {
         "name": "Cleanrot Knight",
@@ -765,7 +765,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 20000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Putrid_Crystalian_Trio.jpg"
     },
     "Putrid Tree Spirit": {
         "name": "Putrid Tree Spirit",
@@ -873,7 +873,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 16000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Omenkiller__Miranda_the_Blighted_Bloom.jpg"
     },
     "Crucible Knight Ordovis": {
         "name": "Crucible Knight Ordovis",
@@ -989,7 +989,7 @@ const BOSS_DATABASE = {
         "phase": 2,
         "type": "Greater Enemy",
         "race": "Humanoid",
-        "specific_location": "Altus Plateau",
+        "specific_location": "Golden Lineage Evergaol",
         "mandatory": false,
         "dlc": false,
         "runes": 75000,
@@ -1017,7 +1017,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 20000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Full-Grown_Fallingstar_Beast.jpg"
     },
     "Abductor Virgins": {
         "name": "Abductor Virgins",
@@ -1029,7 +1029,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 15000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Abductor_Virgins.jpg"
     },
     "Magma Wyrm": {
         "name": "Magma Wyrm",
@@ -1101,7 +1101,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 100000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Mohg_the_Omen.jpg"
     },
     "Esgar, Priest of Blood": {
         "name": "Esgar, Priest of Blood",
@@ -1209,7 +1209,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 45000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Dragonkin_Soldier_of_Nokstella.jpg"
     },
     "Lichdragon Fortissax": {
         "name": "Lichdragon Fortissax",
@@ -1281,7 +1281,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 100000,
-        "image_url": "/static/images/Death_Rite_Bird_Caelid.jpg"
+        "image_url": "/static/images/Death_Rite_Bird.jpg"
     },
     "Vyke, Knight of the Roundtable": {
         "name": "Vyke, Knight of the Roundtable",
@@ -1293,7 +1293,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 102000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Vyke_Knight_of_the_Roundtable.jpg"
     },
     "Ulcerated Tree Spirit (Mountaintops)": {
         "name": "Ulcerated Tree Spirit (Mountaintops)",
@@ -1329,7 +1329,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 180000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Great_Wyrm_Theodorix.jpg"
     },
     "Astel, Stars of Darkness": {
         "name": "Astel, Stars of Darkness",
@@ -1365,7 +1365,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 200000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Loretta_Knight_of_the_Haligtree.jpg"
     },
     "Putrid Grave Warden Duelist": {
         "name": "Putrid Grave Warden Duelist",
@@ -1377,7 +1377,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 24000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Putrid_Grave_Warden_Duelist.jpg"
     },
     "Night's Cavalry (Duo)": {
         "name": "Night's Cavalry (Duo)",
@@ -1401,7 +1401,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 60000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Putrid_Avatar_Snowfield.jpg"
     },
     "Dragonlord Placidusax": {
         "name": "Dragonlord Placidusax",
@@ -1437,10 +1437,10 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 3200,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Crucible_Knight_Evergaol.jpg"
     },
-    "Elden Ring's Black Knife Assassin": {
-        "name": "Elden Ring's Black Knife Assassin",
+    "Black Knife Assassin (Deathtouched)": {
+        "name": "Black Knife Assassin (Deathtouched)",
         "region": "Limgrave",
         "phase": 1,
         "type": "Greater Enemy",
@@ -1449,7 +1449,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": false,
         "runes": 1600,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Elden_Rings_Black_Knife_Assassin.jpg"
     },
     "Misbegotten Warrior": {
         "name": "Misbegotten Warrior",
@@ -1537,7 +1537,7 @@ const BOSS_DATABASE = {
     },
     "Putrescent Knight": {
         "name": "Putrescent Knight",
-        "region": "Gravesite Plain",
+        "region": "Southern Shore",
         "phase": 1,
         "type": "Legend",
         "race": "Undead",
@@ -1597,7 +1597,7 @@ const BOSS_DATABASE = {
     },
     "Promised Consort Radahn": {
         "name": "Promised Consort Radahn",
-        "region": "Shadow Realm",
+        "region": "Enir-Ilim",
         "phase": 2,
         "type": "Demigod",
         "race": "Humanoid",
@@ -1605,7 +1605,7 @@ const BOSS_DATABASE = {
         "mandatory": true,
         "dlc": true,
         "runes": 600000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Promised_Consort_Radahn.jpg"
     },
     "Blackgaol Knight": {
         "name": "Blackgaol Knight",
@@ -1617,7 +1617,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": true,
         "runes": 45000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Blackgaol_Knight.jpg"
     },
     "Ghostflame Dragon": {
         "name": "Ghostflame Dragon",
@@ -1701,7 +1701,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": true,
         "runes": 100000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Rugalea_the_Great_Red_Bear.jpg"
     },
     "Death Knight": {
         "name": "Death Knight",
@@ -1813,7 +1813,7 @@ const BOSS_DATABASE = {
     },
     "Tree Spirit of Fissure": {
         "name": "Tree Spirit of Fissure",
-        "region": "Gravesite Plain",
+        "region": "Southern Shore",
         "phase": 1,
         "type": "Greater Enemy",
         "race": "Tree Avatar",
@@ -1821,7 +1821,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": true,
         "runes": 80000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Tree_Spirit_of_Fissure.jpg"
     },
     "Messmer Soldier (Evergaol)": {
         "name": "Messmer Soldier (Evergaol)",
@@ -1845,7 +1845,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": true,
         "runes": 50000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Sunflower.jpg"
     },
     "Ancient Dragon Senessax": {
         "name": "Ancient Dragon Senessax",
@@ -1869,7 +1869,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": true,
         "runes": 60000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Bloodfiend_Crucible.jpg"
     },
     "Romina's Phantom": {
         "name": "Romina's Phantom",
@@ -1881,7 +1881,7 @@ const BOSS_DATABASE = {
         "mandatory": false,
         "dlc": true,
         "runes": 50000,
-        "image_url": "/static/images/Demi-Human_Chiefs.jpg"
+        "image_url": "/static/images/Rominas_Phantom.jpg"
     },
     "Gravebird": {
         "name": "Gravebird",

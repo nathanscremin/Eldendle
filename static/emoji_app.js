@@ -85,7 +85,7 @@
         }
     };
 
-    async function emojiStartNewGame() {
+    window.emojiStartNewGame = async function() {
         emojiIsGameOver = false;
         emojiGuessedBosses = [];
         

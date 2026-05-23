@@ -582,6 +582,11 @@ function handleVictory(boss, attempts) {
     // Mostra o Modal de Vitória
     renderVictoryModal(boss, attempts);
 
+    // Verifica Conquistas
+    if (window.checkAchievements) {
+        window.checkAchievements(stats, attempts, false); // Add hint support later if needed
+    }
+
     // Atraso sutil para o jogador ver as células terminarem o flip antes do modal de vitória
     setTimeout(() => {
         openModal(modalVictory);
@@ -730,7 +735,13 @@ function setupEventListeners() {
     // Jogar novamente (Reiniciar)
     btnRestart.addEventListener('click', () => {
         closeAllModals();
-        startNewGame();
+        if (currentGame === 'classic') {
+            startNewGame();
+        } else if (currentGame === 'emoji') {
+            if (window.emojiStartNewGame) window.emojiStartNewGame();
+        } else if (currentGame === 'image') {
+            if (window.imageStartNewGame) window.imageStartNewGame();
+        }
     });
 
     // Botão de Dica (Graça de Dica)
